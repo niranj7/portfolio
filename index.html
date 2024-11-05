@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <title>Your Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(to right, #1a1a1a, #333);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .profile {
+            text-align: center;
+        }
+        .profile-img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            border: 3px solid yellowgreen;
+            transition: transform 0.5s;
+        }
+        .profile-img:hover {
+            transform: scale(1.1);
+        }
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav a {
+            color: yellowgreen;
+            text-decoration: none;
+            font-size: 18px;
+            position: relative;
+            transition: color 0.5s;
+        }
+        nav a::after {
+            content: '';
+            display: block;
+            height: 2px;
+            background: yellowgreen;
+            width: 0;
+            transition: width 0.5s;
+        }
+        nav a:hover::after {
+            width: 100%;
+        }
+        section {
+            padding: 60px 0;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .services-list {
+            display: flex;
+            justify-content: space-around;
+        }
+        .service {
+            background: #1f1f1f;
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s, color 0.3s;
+            text-align: center;
+            cursor: pointer;
+        }
+        .service:hover {
+            transform: translateY(-5px);
+        }
+        .service.clicked {
+            color: yellowgreen;
+            animation: float 1s ease-in-out infinite alternate;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); }
+        }
+        .service i {
+            font-size: 40px;
+            color: yellowgreen;
+            margin-bottom: 10px;
+        }
+        .work-list {
+            display: flex;
+            justify-content: space-around;
+        }
+        .work {
+            position: relative;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+        .work img {
+            width: 100%;
+            transition: transform 0.5s;
+        }
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .work:hover img {
+            transform: scale(1.1);
+        }
+        .work:hover .overlay {
+            opacity: 1;
+        }
+        .wave-animation {
+            display: none;
+            background: rgba(173, 255, 47, 0.5); 
+            position: relative;
+            animation: wave 1s ease-in-out infinite;
+        }
+        @keyframes wave {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+        .hobbies-content, .education-content {
+            display: none;
+            background: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        form input,
+        form textarea {
+            width: 80%;
+            margin: 10px 0;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background: #1f1f1f;
+            color: #fff;
+            transition: background 0.3s;
+        }
+        form input:focus,
+        form textarea:focus {
+            background: #333;
+        }
+        button {
+            background: yellowgreen;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #4CAF50;
+        }
+        footer {
+            background: #1a1a1a;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .social-icons a {
+            color: #f5f5f5;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: yellowgreen;
+        }
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .services-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            .work-list {
+                flex-direction: column;
+            }
+            .profile-img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Contact Form Submission Alert and Reset
+            document.getElementById('contact-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                alert('Your message has been sent!');
+                this.reset();
+            });
+    
+            // Toggle visibility for education and hobbies content
+            const toggleContent = (buttonId, contentId, otherContentId) => {
+                document.getElementById(buttonId).addEventListener('click', () => {
+                    document.getElementById(contentId).style.display = 'block';
+                    document.getElementById(otherContentId).style.display = 'none';
+                });
+            };
+    
+            toggleContent('education-btn', 'education-content', 'hobbies-content');
+            toggleContent('hobbies-btn', 'hobbies-content', 'education-content');
+    
+            // Click animation for services
+            document.querySelectorAll('.service').forEach(service => {
+                service.addEventListener('click', function() {
+                    document.querySelectorAll('.service').forEach(s => s.classList.remove('clicked'));
+                    this.classList.add('clicked');
+                });
+            });
+    
+            // Wave animation on project hover
+            document.querySelectorAll('.work').forEach(work => {
+                work.addEventListener('mouseover', () => work.querySelector('.overlay').classList.add('wave-animation'));
+                work.addEventListener('mouseout', () => work.querySelector('.overlay').classList.remove('wave-animation'));
+            });
+        });
+    </script>
+    
+</head>
+<body>
+    <header id="header">
+        <div class="container">
+            <div class="profile">
+                <img src="WhatsApp Image 2024-11-05 at 9.28.05 PM.jpeg" alt="Your Name" class="profile-img">
+                <h1>Niranj Toms</h1>
+                <p>Back end developer</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section id="about">
+        <div class="container">
+            <h2>About Me</h2>
+            <p>   I am Niranj Toms, a Computer Science Engineering student at Lovely Professional University with a robust background in backend development, specializing in scalable web architecture and complex data integration. My technical proficiency spans languages and frameworks including Python, Django, HTML, CSS, and JavaScript, allowing me to engineer high-performance applications with an emphasis on backend efficiency and frontend responsiveness.
+
+             <br> <b><strong style="color: red;">As the founder of WOS Designs</strong></b>, my focus extends to creating bespoke web solutions that incorporate UX/UI principles and data-driven insights to elevate the online presence of business clients. I lead development workflows from requirements analysis to deployment, optimizing code for scalability, security, and modularity.
+              
+              My academic and professional pursuits are complemented by my participation in high-stakes hackathons, where I contribute to innovative solutions in AI, satellite image analysis, and data processing. Driven by a commitment to mastering emerging technologies, I seek opportunities to collaborate on impactful projects that 
+              push the boundaries of conventional software solutions.</p>
+        </div>
+    </section>
+
+    <section id="services">
+        <div class="container">
+            <h2>Services</h2>
+            <div class="services-list">
+                <div class="service" id="web-dev">
+                    <i class="fas fa-code"></i>
+                    <h3>Web Developer</h3>
+                    <p>Skilled in creating dynamic and responsive web applications using HTML, CSS, and JavaScript.
+                      Adept at implementing user-friendly interfaces and ensuring cross-browser compatibility,
+                      while also focusing on mobile responsiveness to enhance user experience</p>
+                </div>
+                <div class="service" id="back-end">
+                    <i class="fas fa-database"></i>
+                    <h3>Back End Developer</h3>
+                    <p>Proficient in building scalable and efficient backend systems using frameworks like Django and Flask.
+                      Experienced in designing RESTful APIs, managing databases with SQL,
+                      and ensuring smooth data flow between the server and client-side applications</p>
+                </div>
+                <div class="service" id="critical-thinker">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>Critical Thinker</h3>
+                    <p>Strong analytical skills demonstrated through participation in hackathons and AI-based projects. 
+                      Experienced in tackling complex problems, leveraging critical thinking and innovative solutions,
+                      and collaborating effectively in team environments to achieve project goals</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio">
+        <div class="container">
+            <h2>projects</h2>
+            <div class="work-list">
+                <div class="work">
+                    <img src="plasticusage.png" alt="Project 1" height="300" width="500">
+                    <div class="overlay">
+                        <h3>plastic usage</h3>
+                        <p>The website used to determine amount of plastic and give money for reusable plastic chat bot also included.</p>
+                    </div>
+                </div>
+                <div class="work">
+                    <img src="WhatsApp Image 2024-11-05 at 9.40.55 PM.jpeg" alt="Project 2" height="300" width="500">
+                    <div class="overlay">
+                        <h3>Project Title</h3>
+                        <p>Description of the project.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="education">
+        <div class="container">
+            <h2>Education & Hobbies</h2>
+            <div class="buttons">
+                <button id="education-btn">Education</button>
+                <button id="hobbies-btn">Hobbies</button>
+            </div>
+            <div class="education-content" id="education-content">
+                <p><strong style="color: red;">B tech: Lovely proffesional university <br>higher secondary:St marys mullankolly <br>primary school:St george pulpally
+                </div></strong></p>
+            <div class="hobbies-content" id="hobbies-content">
+                <p><STRONG style="color: red;">TREKKING,<BR>PLAYING FOOTBALL<BR>EXPLORING NEW THINGS <BR>CODING.</STRONG></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">s
+        <div class="container">
+            <h2>Contact Me</h2>
+            <form id="contact-form">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Niranj Toms. All Rights Reserved.</p>
+            <div class="social-icons">
+                <a href="https://www.linkedin.com/in/niranj-toms-3541ba320" target="_blank"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/niranj-toms" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
